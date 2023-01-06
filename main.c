@@ -101,7 +101,7 @@ void task2()
     unsigned int dwCountNews=0;
     printf("\nNhap ma can tim: ");
     scanf("%s",byTestCode);
-    printf("\n%s\n",byTestCode);
+    //printf("\n%s\n",byTestCode);
     unsigned int dwStartNews=0;
     unsigned int dwEndNews;
     unsigned int dwLengthFile=strlen(fileStr);
@@ -122,7 +122,7 @@ void task2()
             dwCountNews++;
         dwStartNews=dwEndNews+1;
     }
-    printf("\nSo ban tin gui di la: %d",dwCountNews);
+    printf("\nSo ban tin gui di la: %d\n",dwCountNews);
 }
 void task3()
 {
@@ -200,26 +200,42 @@ void task3()
     for(unsigned int i=1;i<=dwNumberBufferString;i++)
         printf("thiet bi %d co dia chi la : NWK %s, ENDPOINT %s\n",i,pbyBufferString[i],pbyBufferEndPoint[i]);
 }
+void task4()
+{
+    char *pbyCheckEnd=fileStr;
+    char byEnd[MAXLENGTHFILE]="";
+    byEnd[0]=10;
+    unsigned int dwLengthFile=strlen(fileStr);
+    while(pbyCheckEnd!=fileStr+dwLengthFile)
+    {
+        char *pbyFindDirect=strstr(pbyCheckEnd,"\"cmd\":");
+        printf("%d\n",pbyFindDirect);
+        char *pbyEndDirect=strstr(pbyCheckEnd,",");
+        char byDirect[MAXLENGTHFILE]="";
+        char byReqidCode[MAXLENGTHFILE]="";
+        for(unsigned int i=0;i<pbyEndDirect-pbyFindDirect;i++)
+            byDirect[i]=*(pbyEndDirect+i);
+        printf("%s\n",byDirect);
+        if(strcmp(byDirect,"\"set\"")==0)
+        {
+            char *pbyFindReqid=strstr(pbyCheckEnd,"\"reqid\": \"");
+            unsigned int dwLengthReqid=strlen("\"reqid\": \"");
+            char *pbyFindReqidEnd=strstr(pbyCheckEnd+dwLengthReqid,"\"");
+            unsigned int dwLengthReqidCode=pbyFindReqidEnd-pbyFindReqid-dwLengthReqid;
+            for(unsigned int i=0;i<dwLengthReqidCode;i++)
+                byReqidCode[i]=*(pbyFindReqid+i+dwLengthReqid);
+            printf("%s\n",byReqidCode);
+
+        }
+        pbyCheckEnd=strstr(pbyCheckEnd,byEnd)+1;
+    }
+}
 int main()
 {
     fileToStr(fileStr);
     //task1();
     //task2();
-    task3();
-    /*char ss[20][MAXLENGTHFILE];
-    char s1[MAXLENGTHFILE]="HELLO";
-    char s2[MAXLENGTHFILE]="ANH EM";
-    for(unsigned int i=0;i<strlen(s1);i++)
-        ss[0][i]=s1[i];
-    for(unsigned int i=0;i<strlen(s2);i++)
-        ss[1][i]=s2[i];
-    printf("%s\n",ss[0]);
-    printf("%s\n",ss[1]);
-    */
-    /*char s1[MAXLENGTHFILE]="hello";
-    char s2[MAXLENGTHFILE]="hello";
-    unsigned int d=strcmp(s1,s2);
-    printf("\n%d",d);
-    */
+    //task3();
+    task4();
     return 0;
 }

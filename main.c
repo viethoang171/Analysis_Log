@@ -92,35 +92,47 @@ int count(char *file_text)
 /******************************************************************************/
 void task1()
 {
-    unsigned int dem=count(fileStr);
-    printf("\nSo luong ban tin la: %d",dem);
+    unsigned int dwCount=count(fileStr);
+    printf("\nSo luong ban tin la: %d",dwCount);
 }
 void task2()
 {
-    char byTestCode[MAXLENGTHFILE]="";
+    char byAddressNWK[MAXLENGTHFILE]="";
+    printf("\nNhap dia chi nwk cua thiet bi: %");
+    scanf("%s",byAddressNWK);
+    printf("\n");
+    char *pbyCheckEnd=fileStr;
+    char byEnd[MAXLENGTHFILE]="";
+    byEnd[0]=10;
+    char *pbyStart=NULL;
+    char *pbyEnd=NULL;
     unsigned int dwCountNews=0;
-    printf("\nNhap ma can tim: ");
-    scanf("%s",byTestCode);
-    //printf("\n%s\n",byTestCode);
-    unsigned int dwStartNews=0;
-    unsigned int dwEndNews;
-    unsigned int dwLengthFile=strlen(fileStr);
-     while(dwStartNews<dwLengthFile)
+    while(pbyCheckEnd!=NULL)
     {
-        dwEndNews=dwStartNews;
         char byNews[MAXLENGTHFILE]="";
-        unsigned int i=-1;
-        while(fileStr[dwEndNews]!=10&&dwEndNews<dwLengthFile)
+        unsigned int dwNewsIndex=0;
+        //printf("%d\n",file_text);
+        pbyStart=strstr(pbyCheckEnd,"[INFO]");
+        pbyEnd=strstr(pbyCheckEnd+1,byEnd);
+        //printf("%d\n%d\n",pbyStart,pbyEnd);
+        char *it=NULL;
+        if(pbyStart-pbyEnd<0)
+        for(it=pbyStart;it!=pbyEnd+1;it++)
+            {
+                byNews[dwNewsIndex++]=*it;
+                //printf("333333333333333333333333\n");
+            }
+
+        char *pbyFindSet=strstr(byNews,"\"set\"");
+        if(pbyFindSet==NULL)
         {
-            byNews[++i]=fileStr[dwEndNews];
-            dwEndNews++;
+            pbyCheckEnd=strstr(pbyCheckEnd+1,byEnd);
+            continue;
         }
-        //printf("%s\n",byNews);
-        char *pbyTim=NULL;
-        pbyTim=strstr(byNews,byTestCode);
-        if(pbyTim!=NULL)
+        char *pbyFindNwk=strstr(byNews,byAddressNWK);
+        if(pbyFindNwk!=NULL)
             dwCountNews++;
-        dwStartNews=dwEndNews+1;
+        pbyCheckEnd=strstr(pbyCheckEnd+1,byEnd);
     }
     printf("\nSo ban tin gui di la: %d\n",dwCountNews);
 }
@@ -129,31 +141,32 @@ void task3()
     char pbyBufferString[20][MAXLENGTHFILE];
     char pbyBufferEndPoint[20][MAXLENGTHFILE];
     unsigned int dwNumberBufferString=0;
-    unsigned int dwLengthFile=strlen(fileStr);
+    char byEnd[MAXLENGTHFILE]="";
+    byEnd[0]=10;
     char *pbyCheckEnd=fileStr;
-    pbyCheckEnd=fileStr;
     char *pbyStart=NULL;
     char *pbyEnd=NULL;
-    char byEndLine[MAXLENGTHFILE]=""; //ASCII
-    byEndLine[0]=10;
-    for(int k=1;k<=18;k++)
+    while(pbyCheckEnd!=NULL)
     {
         char byNews[MAXLENGTHFILE]="";
         unsigned int dwNewsIndex=0;
         //printf("%d\n",file_text);
         pbyStart=strstr(pbyCheckEnd,"[INFO]");
-        pbyEnd=strstr(pbyCheckEnd,byEndLine);
+        pbyEnd=strstr(pbyCheckEnd+1,byEnd);
         //printf("%d\n%d\n",pbyStart,pbyEnd);
         char *it=NULL;
+        if(pbyStart-pbyEnd<0)
         for(it=pbyStart;it!=pbyEnd+1;it++)
             {
                 byNews[dwNewsIndex++]=*it;
                 //printf("333333333333333333333333\n");
             }
-        char *pbyFindSwitch=strstr(byNews,"switch");
-        if(pbyFindSwitch==NULL)
+        //printf("%s\n",byNews);
+
+        char *pbyFindSet=strstr(byNews,"\"set\"");
+        if(pbyFindSet==NULL)
         {
-            pbyCheckEnd=pbyEnd+1;
+            pbyCheckEnd=strstr(pbyCheckEnd+1,byEnd);
             continue;
         }
         char *pbyNewsCode=NULL;
@@ -178,7 +191,8 @@ void task3()
         char byResultEndPoint[MAXLENGTHFILE]="";
         while(*(pbyEndPoint+dwLengthEndPoint)!='"')
                 byResultEndPoint[dwLengthEndPoint++]=*(pbyEndPoint+dwLengthEndPoint);
-        pbyCheckEnd=pbyEnd+1;
+        //printf("%s\n",byResultNetWork);
+        //printf("%s\n\n\n\n\n",byResultEndPoint);
         unsigned int dwCheckString=0;
         for(unsigned int i=1;i<=dwNumberBufferString;i++)
             if(strcmp(byResultNetWork,pbyBufferString[i])==0)
@@ -194,6 +208,9 @@ void task3()
                 for(unsigned int j=0;j<strlen(byResultNetWork);j++)
                 pbyBufferString[dwNumberBufferString][j]=byResultNetWork[j];
             }
+
+        //printf("%d\n",pbyCheckEnd);
+        pbyCheckEnd=strstr(pbyCheckEnd+1,byEnd);
     }
     //printf("So luong string la: %d\n",dwNumberBufferString);
     //printf("%d\n",dwNumberBufferString);
@@ -207,13 +224,12 @@ void task4()
     char *pbyCheckEnd=fileStr;
     char byEnd[MAXLENGTHFILE]="";
     byEnd[0]=10;
-    unsigned int dwLengthFile=strlen(fileStr);
-    char byReqidCode[MAXLENGTHFILE]="";
-    char byReqidCodeResponse[MAXLENGTHFILE]="";
-    for(int k=1;k<=18;k++)
+    char byReqidSet[MAXLENGTHFILE]="";
+    char byReqidStatus[MAXLENGTHFILE]="";
+    while(pbyCheckEnd!=NULL)
     {
-        char *pbyEndNews=strstr(pbyCheckEnd,byEnd);
-        unsigned int dwLengthNews=pbyEndNews-pbyCheckEnd;
+
+        char *pbyEndNews=strstr(pbyCheckEnd+1,byEnd);
         char *pbyFindDirect=strstr(pbyCheckEnd,"\"cmd\":");
         unsigned int dwLengthDirect=strlen("\"cmd\":");
         //printf("%d\n",pbyFindDirect);
@@ -229,41 +245,67 @@ void task4()
         unsigned int dwLengthReqidCode=pbyFindReqidEnd-pbyFindReqid-dwLengthReqid;
         if(strcmp(byDirect,"\"set\"")==0)
         {
-            byReqidCode[MAXLENGTHFILE]="";
+            byReqidSet[MAXLENGTHFILE]="";
             for(unsigned int i=0;i<dwLengthReqidCode;i++)
-                byReqidCode[i]=*(pbyFindReqid+i+dwLengthReqid);
+                byReqidSet[i]=*(pbyFindReqid+i+dwLengthReqid);
             //printf("%s\n",byReqidCode);
         }
         else
         {
-            byReqidCodeResponse[MAXLENGTHFILE]="";
+            byReqidStatus[MAXLENGTHFILE]="";
             for(unsigned int i=0;i<dwLengthReqidCode;i++)
-                byReqidCodeResponse[i]=*(pbyFindReqid+i+dwLengthReqid);
-            if(strcmp(byReqidCode,byReqidCodeResponse)!=0)
+                byReqidStatus[i]=*(pbyFindReqid+i+dwLengthReqid);
+            if(strcmp(byReqidSet,byReqidStatus)!=0)
                 dwCountErrorNews++;
         }
-        pbyCheckEnd+=dwLengthNews+1;
+
+        pbyCheckEnd=strstr(pbyCheckEnd+1,byEnd);
     }
     printf("\nSo ban tin loi: %d",dwCountErrorNews);
 }
+unsigned int pow10(int i)
+{
+    if(i==0)
+        return 1;
+    unsigned int dwResult=1;
+    for(unsigned int k=1;k<=i;k++)
+        dwResult*=10;
+    return dwResult;
+}
+unsigned int stringToNum(char byStr[MAXLENGTHFILE])
+{
+    unsigned int dwResult=0;
+    unsigned int dwLengthStr=strlen(byStr);
+    for(int i=0;i<dwLengthStr;i++)
+    {
+        unsigned int dwChuSo=byStr[dwLengthStr-i-1]-48;
+        dwResult+=dwChuSo*pow10(i);
+    }
+    return dwResult;
+}
 void task5()
 {
-    char byEnd[]="";
+    unsigned int dwMaxDelay=0;
+    char byEnd[MAXLENGTHFILE]="";
     byEnd[0]=10;
     char *pbyCheckEnd=fileStr;
-    for(unsigned int k=1;k<=18;k++)
-    {
-        //Tim Direct
-        /*char *pbyFindDirect=strstr(pbyCheckEnd,"\"cmd\":");
-        unsigned int dwLengthDirect=strlen("\"cmd\":");
-        //printf("%d\n",pbyFindDirect);
-        char *pbyEndDirect=strstr(pbyCheckEnd,",");
-        char byDirect[MAXLENGTHFILE]="";
-        for(unsigned int i=0;i<pbyEndDirect-pbyFindDirect-dwLengthDirect;i++)
-            byDirect[i]=*(pbyFindDirect+i+dwLengthDirect);
-            */
 
+    char byMinuteSet[MAXLENGTHFILE]="";
+    char byMinuteStatus[MAXLENGTHFILE]="";
+    char bySecondSet[MAXLENGTHFILE]="";
+    char bySecondStatus[MAXLENGTHFILE]="";
+
+    char byReqidSet[MAXLENGTHFILE]="";
+    char byReqidStatus[MAXLENGTHFILE]="";
+    while(pbyCheckEnd!=NULL)
+    {
         char *pbyFindMinute=strstr(pbyCheckEnd,":");
+        //printf("%d\n",pbyFindMinute);
+
+
+
+
+        //xu ly Time
         char *pbyFindSecond=strstr(pbyFindMinute+1,":");
         char *pbyFindEndTime=strstr(pbyFindSecond+1,"]");
         char byDelayMinute[MAXLENGTHFILE]="";
@@ -274,20 +316,219 @@ void task5()
         unsigned int dwLengthSecond=pbyFindEndTime-pbyFindSecond-1;
         for(unsigned int i=0;i<dwLengthSecond;i++)
             byDelaySecond[i]=*(pbyFindSecond+i+1);
-        printf("%s\n",byDelayMinute);
-        printf("%s\n\n\n\n",byDelaySecond);
-        char *pbyEnd=strstr(pbyCheckEnd+1,byEnd);
-        unsigned int dwLengthNews=pbyEnd-pbyCheckEnd;
-        pbyCheckEnd+=dwLengthNews;
+
+
+        //FindDirect
+        char *pbyFindDirect=strstr(pbyCheckEnd,"\"cmd\":");
+        unsigned int dwLengthDirect=strlen("\"cmd\":");
+        //printf("%d\n",pbyFindDirect);
+        char *pbyEndDirect=strstr(pbyCheckEnd,",");
+        char byDirect[MAXLENGTHFILE]="";
+        for(unsigned int i=0;i<pbyEndDirect-pbyFindDirect-dwLengthDirect;i++)
+            byDirect[i]=*(pbyFindDirect+i+dwLengthDirect);
+        //printf("%s\n",byDirect);
+
+
+
+
+        //FindCorrectNews
+        char *pbyFindReqid=strstr(pbyCheckEnd,"\"reqid\": \"");
+        unsigned int dwLengthReqid=strlen("\"reqid\": \"");
+        char *pbyFindReqidEnd=strstr(pbyFindReqid+dwLengthReqid,"\"");
+        unsigned int dwLengthReqidCode=pbyFindReqidEnd-pbyFindReqid-dwLengthReqid;
+        if(strcmp(byDirect,"\"set\"")==0)
+        {
+            byReqidSet[MAXLENGTHFILE]="";
+            for(unsigned int i=0;i<dwLengthReqidCode;i++)
+                byReqidSet[i]=*(pbyFindReqid+i+dwLengthReqid);
+            //printf("%s\n",byReqidCode);
+        }
+        else
+        {
+            byReqidStatus[MAXLENGTHFILE]="";
+            for(unsigned int i=0;i<dwLengthReqidCode;i++)
+                byReqidStatus[i]=*(pbyFindReqid+i+dwLengthReqid);
+            if(strcmp(byReqidSet,byReqidStatus)!=0)
+            {
+                pbyCheckEnd=strstr(pbyCheckEnd+1,byEnd);
+                continue;
+            }
+        }
+
+
+
+
+
+        //Xu ly Direct
+        if(strcmp(byDirect,"\"set\"")==0)
+        {
+            byMinuteSet[MAXLENGTHFILE]="";
+            bySecondSet[MAXLENGTHFILE]="";
+            for(unsigned int k=0;k<dwLengthMinute;k++)
+                byMinuteSet[k]=*(byDelayMinute+k);
+            unsigned int dwLengthSecondSet=0;
+            for(unsigned int k=0;k<dwLengthSecond;k++)
+                if(*(byDelaySecond+k)!='.')
+                    bySecondSet[dwLengthSecondSet++]=*(byDelaySecond+k);
+            //printf("Set: %s, %s\n",byMinuteSet,bySecondSet);
+        }
+        else
+        {
+            byMinuteStatus[MAXLENGTHFILE]="";
+            bySecondStatus[MAXLENGTHFILE]="";
+            for(unsigned int k=0;k<dwLengthMinute;k++)
+                byMinuteStatus[k]=*(byDelayMinute+k);
+            unsigned int dwLengthSecondStatus=0;
+            for(unsigned int k=0;k<dwLengthSecond;k++)
+                if(*(byDelaySecond+k)!='.')
+                   bySecondStatus[dwLengthSecondStatus++]=*(byDelaySecond+k);
+            //printf("Set: %s, %s\n",byMinuteSet,bySecondSet);
+            //printf("Status: %s, %s\n",byMinuteStatus,bySecondStatus);
+            unsigned int dwTimeDelay=(stringToNum(byMinuteStatus)-stringToNum(byMinuteSet))*60*1000+(stringToNum(bySecondStatus)-stringToNum(bySecondSet));
+            //printf("%d\n",dwTimeDelay);
+            if(dwTimeDelay>dwMaxDelay)
+                dwMaxDelay=dwTimeDelay;
+        }
+
+        pbyCheckEnd=strstr(pbyCheckEnd+1,byEnd);
     }
+    printf("Do tre lon nhat la: %d Millisecond\n",dwMaxDelay);
+}
+void duyetNews()
+{
+    char byEnd[MAXLENGTHFILE]="";
+    byEnd[0]=10;
+    char *pbyCheckEnd=NULL;
+    do
+    {
+        if(pbyCheckEnd==NULL)
+            pbyCheckEnd=strstr(fileStr,byEnd);
+        else
+            pbyCheckEnd=strstr(pbyCheckEnd+1,byEnd);
+    }while(pbyCheckEnd!=NULL);
+}
+void task6()
+{
+    unsigned int dwSumTimeDelay=0;
+    unsigned int dwCountCorrectNews=0;
+    char byEnd[MAXLENGTHFILE]="";
+    byEnd[0]=10;
+    char *pbyCheckEnd=fileStr;
+
+    char byMinuteSet[MAXLENGTHFILE]="";
+    char byMinuteStatus[MAXLENGTHFILE]="";
+    char bySecondSet[MAXLENGTHFILE]="";
+    char bySecondStatus[MAXLENGTHFILE]="";
+
+    char byReqidSet[MAXLENGTHFILE]="";
+    char byReqidStatus[MAXLENGTHFILE]="";
+    while(pbyCheckEnd!=NULL)
+    {
+        char *pbyFindMinute=strstr(pbyCheckEnd,":");
+        //printf("%d\n",pbyFindMinute);
+
+
+
+
+        //xu ly Time
+        char *pbyFindSecond=strstr(pbyFindMinute+1,":");
+        char *pbyFindEndTime=strstr(pbyFindSecond+1,"]");
+        char byDelayMinute[MAXLENGTHFILE]="";
+        char byDelaySecond[MAXLENGTHFILE]="";
+        unsigned int dwLengthMinute=pbyFindSecond-pbyFindMinute-1;
+        for(unsigned int i=0;i<dwLengthMinute;i++)
+            byDelayMinute[i]=*(pbyFindMinute+i+1);
+        unsigned int dwLengthSecond=pbyFindEndTime-pbyFindSecond-1;
+        for(unsigned int i=0;i<dwLengthSecond;i++)
+            byDelaySecond[i]=*(pbyFindSecond+i+1);
+
+
+        //FindDirect
+        char *pbyFindDirect=strstr(pbyCheckEnd,"\"cmd\":");
+        unsigned int dwLengthDirect=strlen("\"cmd\":");
+        //printf("%d\n",pbyFindDirect);
+        char *pbyEndDirect=strstr(pbyCheckEnd,",");
+        char byDirect[MAXLENGTHFILE]="";
+        for(unsigned int i=0;i<pbyEndDirect-pbyFindDirect-dwLengthDirect;i++)
+            byDirect[i]=*(pbyFindDirect+i+dwLengthDirect);
+        //printf("%s\n",byDirect);
+
+
+
+
+        //FindCorrectNews
+        char *pbyFindReqid=strstr(pbyCheckEnd,"\"reqid\": \"");
+        unsigned int dwLengthReqid=strlen("\"reqid\": \"");
+        char *pbyFindReqidEnd=strstr(pbyFindReqid+dwLengthReqid,"\"");
+        unsigned int dwLengthReqidCode=pbyFindReqidEnd-pbyFindReqid-dwLengthReqid;
+        if(strcmp(byDirect,"\"set\"")==0)
+        {
+            byReqidSet[MAXLENGTHFILE]="";
+            for(unsigned int i=0;i<dwLengthReqidCode;i++)
+                byReqidSet[i]=*(pbyFindReqid+i+dwLengthReqid);
+            //printf("%s\n",byReqidCode);
+        }
+        else
+        {
+            byReqidStatus[MAXLENGTHFILE]="";
+            for(unsigned int i=0;i<dwLengthReqidCode;i++)
+                byReqidStatus[i]=*(pbyFindReqid+i+dwLengthReqid);
+            if(strcmp(byReqidSet,byReqidStatus)!=0)
+            {
+                pbyCheckEnd=strstr(pbyCheckEnd+1,byEnd);
+                continue;
+            }
+            else
+                dwCountCorrectNews++;
+        }
+
+
+
+
+
+        //Xu ly Direct
+        if(strcmp(byDirect,"\"set\"")==0)
+        {
+            byMinuteSet[MAXLENGTHFILE]="";
+            bySecondSet[MAXLENGTHFILE]="";
+            for(unsigned int k=0;k<dwLengthMinute;k++)
+                byMinuteSet[k]=*(byDelayMinute+k);
+            unsigned int dwLengthSecondSet=0;
+            for(unsigned int k=0;k<dwLengthSecond;k++)
+                if(*(byDelaySecond+k)!='.')
+                    bySecondSet[dwLengthSecondSet++]=*(byDelaySecond+k);
+            //printf("Set: %s, %s\n",byMinuteSet,bySecondSet);
+        }
+        else
+        {
+            byMinuteStatus[MAXLENGTHFILE]="";
+            bySecondStatus[MAXLENGTHFILE]="";
+            for(unsigned int k=0;k<dwLengthMinute;k++)
+                byMinuteStatus[k]=*(byDelayMinute+k);
+            unsigned int dwLengthSecondStatus=0;
+            for(unsigned int k=0;k<dwLengthSecond;k++)
+                if(*(byDelaySecond+k)!='.')
+                   bySecondStatus[dwLengthSecondStatus++]=*(byDelaySecond+k);
+            //printf("Set: %s, %s\n",byMinuteSet,bySecondSet);
+            //printf("Status: %s, %s\n",byMinuteStatus,bySecondStatus);
+            unsigned int dwTimeDelay=(stringToNum(byMinuteStatus)-stringToNum(byMinuteSet))*60*1000+(stringToNum(bySecondStatus)-stringToNum(bySecondSet));
+            //printf("%d\n",dwTimeDelay);
+            dwSumTimeDelay+=dwTimeDelay;
+        }
+
+        pbyCheckEnd=strstr(pbyCheckEnd+1,byEnd);
+    }
+    unsigned int dwAveTimeDelay=dwSumTimeDelay/dwCountCorrectNews;
+    printf("Do tre trung binh la: %d Millisecond\n",dwAveTimeDelay);
 }
 int main()
 {
     fileToStr(fileStr);
-    //task1();
-    //task2();
-    //task3();
-    //task4();
-    //task5();
+    task1();
+    task2();
+    task3();
+    task4();
+    task5();
+    task6();
     return 0;
 }
